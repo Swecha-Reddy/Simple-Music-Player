@@ -1,4 +1,4 @@
-# DevAmp - Premium Developer Music Player 🎵👨‍💻
+# Developer Music Player
 
 A high-performance, developer-focused music player built strictly with **HTML, CSS, and Vanilla JavaScript**.
 
@@ -25,6 +25,5 @@ A high-performance, developer-focused music player built strictly with **HTML, C
 ## Tech Stack
 - **HTML5**: Semantic structure.
 - **CSS3**: Variables, Flexbox/Grid, Backdrop Filter.
-- **JavaScript (ES6+)**: AudioContext API, Canvas API, File API.
+- **JavaScript (ES6+)**: AudioContext API, Canvas API, File API
 
-Enjoy your coding sessions with DevAmp! 🚀
