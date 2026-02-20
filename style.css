@@ -1,0 +1,555 @@
+:root {
+    --bg-color: #1e1e1e;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent-color: #61dafb;
+    /* React Blue - developer favorite */
+    --highlight-color: #e06c75;
+    /* Red/Pink - error/syntax */
+    --text-primary: #dcdcdc;
+    --text-secondary: #808080;
+    --font-main: 'Inter', sans-serif;
+    --font-code: 'Fira Code', monospace;
+    --transition-speed: 0.3s;
+    --border-radius-lg: 16px;
+    --border-radius-md: 8px;
+    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at top left, #2c2c2c, #1e1e1e);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+}
+
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    max-height: 800px;
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 300px;
+    background: rgba(20, 20, 20, 0.8);
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+    font-family: var(--font-code);
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color var(--transition-speed);
+}
+
+.icon-btn:hover {
+    color: var(--accent-color);
+}
+
+.playlist-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.playlist-item {
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: background var(--transition-speed), transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-code);
+    font-size: 0.9rem;
+}
+
+.playlist-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(4px);
+}
+
+.playlist-item.active {
+    background: rgba(97, 218, 251, 0.1);
+    /* transparent accent */
+    border-left: 3px solid var(--accent-color);
+}
+
+.playlist-item .track-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.playlist-item .track-title {
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist-item .track-meta {
+    font-size: 0.75rem;
+    /* smaller */
+    color: var(--text-secondary);
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+    opacity: 0.5;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    /* For canvas overlap */
+}
+
+/* Visualizer */
+.visualizer-container {
+    flex: 1;
+    /* Takes up most space */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #252525, #1e1e1e);
+    overflow: hidden;
+}
+
+#visualizer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    /* Behind text info */
+}
+
+.track-info-overlay {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    z-index: 2;
+    /* Foreground */
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.track-info-overlay h1 {
+    font-family: var(--font-code);
+    font-size: 2rem;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+}
+
+.track-info-overlay p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Controls */
+.controls-container {
+    height: 140px;
+    background: rgba(20, 20, 20, 0.9);
+    border-top: 1px solid var(--glass-border);
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Center Vertically */
+    gap: 15px;
+    z-index: 10;
+}
+
+/* Progress Bar */
+.progress-area {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: var(--font-code);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.progress-bar-wrapper {
+    flex: 1;
+    height: 6px;
+    background: var(--glass-border);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    /* To ensure bar stays in bounds */
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-color);
+    border-radius: 3px;
+    transition: width 0.1s linear;
+}
+
+/* Buttons Row */
+.control-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    position: relative;
+}
+
+.control-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.control-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    /* subtle highlight */
+}
+
+.control-btn.sm {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+}
+
+.control-btn.md {
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+}
+
+.control-btn.lg {
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
+    background: var(--accent-color);
+    /* Play button stands out */
+    color: #1e1e1e;
+    /* Dark icon */
+    box-shadow: 0 4px 12px rgba(97, 218, 251, 0.4);
+}
+
+.control-btn.lg:hover {
+    transform: scale(1.05);
+    background: #7ae0fc;
+    /* lighter accent */
+    color: #1e1e1e;
+}
+
+/* Utils (Volume, Settings) */
+.utils {
+    position: absolute;
+    /* Position relative to .controls-container if desired, or flex */
+    right: 40px;
+    bottom: 35px;
+    /* Aligned with buttons row manually or use flex on parent row */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Wait, Utils is inside flex-column parent, needs to be row with Buttons? No, Utils is separate div. */
+/* Let's fix controls-container layout: 
+   Row 1: Progress
+   Row 2: Flex (Utils -- Buttons -- ...) or just Absolute Utils
+*/
+.controls-container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    align-items: center;
+}
+
+.control-buttons {
+    grid-row: 2;
+    justify-self: center;
+}
+
+.utils {
+    grid-row: 2;
+    justify-self: end;
+}
+
+.volume-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+}
+
+#volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 80px;
+    height: 4px;
+    background: var(--glass-border);
+    border-radius: 2px;
+    outline: none;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#volume-slider::-webkit-slider-thumb:hover {
+    background: var(--accent-color);
+}
+
+/* Animations / States */
+.playing .fa-play {
+    display: none;
+}
+
+.paused .fa-pause {
+    display: none;
+}
+
+/* Logic will swap icons manually or classes */
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 40%;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .main-content {
+        height: 60%;
+    }
+
+    .utils {
+        display: none;
+    }
+}
+
+/* New Features Styles */
+
+/* Visualizer Controls */
+.viz-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 20;
+    display: flex;
+    gap: 15px;
+}
+
+.viz-controls .icon-btn {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.viz-controls .icon-btn:hover {
+    background: var(--accent-color);
+    color: #1e1e1e;
+}
+
+/* Equalizer Panel */
+.equalizer-panel {
+    position: absolute;
+    bottom: 120px;
+    /* Above controls */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 20, 20, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    gap: 15px;
+    z-index: 30;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.equalizer-panel.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.eq-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-family: var(--font-code);
+}
+
+.eq-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 6px;
+    height: 100px;
+    background: var(--glass-border);
+    border-radius: 3px;
+    outline: none;
+    writing-mode: bt-lr;
+    /* IE/Edge specific */
+    -webkit-appearance: slider-vertical;
+    /* Standard for vertical sliders */
+}
+
+/* Neon / Cyberpunk Theme Overrides */
+body.neon-theme {
+    --bg-color: #050505;
+    --accent-color: #0ff;
+    --glass-bg: rgba(0, 255, 255, 0.05);
+    --glass-border: rgba(0, 255, 255, 0.3);
+    --text-primary: #fff;
+    --text-secondary: #008f8f;
+    background: radial-gradient(circle at center, #1a0b2e, #000);
+}
+
+body.neon-theme .app-container {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0, 255, 255, 0.1);
+    border: 1px solid var(--accent-color);
+}
+
+body.neon-theme .sidebar {
+    background: rgba(5, 5, 10, 0.8);
+    border-right: 1px solid var(--glass-border);
+}
+
+body.neon-theme .playlist-item.active {
+    background: rgba(0, 255, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    border-left: 3px solid #0ff;
+}
+
+body.neon-theme .control-btn.lg {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 15px var(--accent-color);
+}
+
+body.neon-theme .control-btn.lg:hover {
+    background: var(--accent-color);
+    color: #000;
+    box-shadow: 0 0 25px var(--accent-color);
+}
+
+body.neon-theme .progress-bar {
+    background: linear-gradient(90deg, #0ff, #f0f);
+    box-shadow: 0 0 10px #0ff;
+}
+
+/* Favorites */
+.control-btn.active-fav {
+    color: #ff4757;
+}
+
+.control-btn.active-btn {
+    color: var(--accent-color);
+}
